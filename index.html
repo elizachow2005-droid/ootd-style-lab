@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 個人風格穿搭靈感室 OOTD Style Lab</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --primary-color: #2b2d42;
+            --accent-color: #e63946;
+            --top-color: #4a90e2;
+            --bottom-color: #333333;
+            --shoes-color: #8d99ae;
+        }
+
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .app-container { grid-template-columns: 1fr; }
+        }
+
+        h1 { grid-column: 1 / -1; margin-top: 0; text-align: center; color: #1d3557; }
+
+        /* 左側：模特兒預覽區 */
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #edf2f4;
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .avatar-svg {
+            width: 220px;
+            height: 340px;
+        }
+
+        .color-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-picker-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        /* 右側：操作面板 */
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button.btn-primary {
+            background-color: #e63946;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        button.btn-primary:hover { background-color: #d62828; }
+
+        .advice-box {
+            background: #f1faee;
+            border-left: 4px solid #a8dadc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .favorites {
+            margin-top: 20px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .fav-item {
+            background: #f8f9fa;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h1>👗 AI 個人風格穿搭靈感室</h1>
+
+    <!-- 左側：穿搭展示視窗 -->
+    <div class="avatar-section">
+        <h3>今日試穿鏡</h3>
+        <svg class="avatar-svg" viewBox="0 0 200 350">
+            <!-- 頭部與身體骨架 -->
+            <circle cx="100" cy="40" r="22" fill="#ffe0bd" />
+            <rect x="92" y="60" width="16" height="15" fill="#ffe0bd" />
+            
+            <!-- 上衣 (Top) -->
+            <path id="clothing-top" d="M 65,75 L 135,75 L 145,160 L 55,160 Z" fill="var(--top-color)" />
+            
+            <!-- 下著 (Bottom) -->
+            <path id="clothing-bottom" d="M 60,160 L 140,160 L 130,270 L 105,270 L 100,180 L 95,270 L 70,270 Z" fill="var(--bottom-color)" />
+            
+            <!-- 手臂 -->
+            <rect x="48" y="75" width="14" height="90" rx="7" fill="#ffe0bd" />
+            <rect x="138" y="75" width="14" height="90" rx="7" fill="#ffe0bd" />
+
+            <!-- 鞋子 (Shoes) -->
+            <rect id="shoes-left" x="70" y="270" width="25" height="15" rx="5" fill="var(--shoes-color)" />
+            <rect id="shoes-right" x="105" y="270" width="25" height="15" rx="5" fill="var(--shoes-color)" />
+        </svg>
+
+        <!-- 自訂調色盤 -->
+        <div class="color-controls">
+            <div class="color-picker-group">
+                <span>上衣顏色</span>
+                <input type="color" id="topColorPicker" value="#4a90e2" onchange="changeColor('top', this.value)">
+            </div>
+            <div class="color-picker-group">
+                <span>下著顏色</span>
+                <input type="color" id="bottomColorPicker" value="#333333" onchange="changeColor('bottom', this.value)">
+            </div>
+            <div class="color-picker-group">
+                <span>鞋子顏色</span>
+                <input type="color" id="shoesColorPicker" value="#8d99ae" onchange="changeColor('shoes', this.value)">
+            </div>
+        </div>
+    </div>
+
+    <!-- 右側：條件選擇與 AI 搭配面板 -->
+    <div class="control-section">
+        <div>
+            <div class="form-group">
+                <label for="weather">今日天氣狀況：</label>
+                <select id="weather">
+                    <option value="sunny">☀️ 晴朗舒適 (24°C~28°C)</option>
+                    <option value="cold">❄️ 寒冷降溫 (12°C~18°C)</option>
+                    <option value="rainy">🌧️ 陰雨綿綿 (微濕冷)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="occation">預計出席場合：</label>
+                <select id="occation">
+                    <option value="casual">☕ 日常休閒 / 朋友聚會</option>
+                    <option value="work">💼 職場工作 / 上課簡報</option>
+                    <option value="date">🌹 約會 / 晚餐聚會</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" onclick="generateOOTD()">✨ 生成 AI 建議穿搭</button>
+        </div>
+
+        <div class="advice-box">
+            <strong>💡 OOTD 穿搭建議：</strong>
+            <p id="advice-text">請選擇天氣與場合後點擊生成！</p>
+        </div>
+
+        <div>
+            <button onclick="saveOOTD()" style="background:#457b9d; color:white; border:none; margin-top:10px;">⭐ 收藏此套穿搭</button>
+            <div class="favorites">
+                <strong>📜 已收藏組合：</strong>
+                <div id="fav-list">尚無紀錄</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 搭配資料庫
+    const stylePresets = {
+        sunny: {
+            casual: { top: "#FFB703", bottom: "#8ECAE6", shoes: "#FB8500", text: "鮮明黃 T 恤搭配天藍休閒褲，展現充滿活力的夏日休閒感！" },
+            work: { top: "#FFFFFF", bottom: "#023047", shoes: "#212529", text: "經典白襯衫搭配深藍西裝褲，簡約俐落且透氣不悶熱。" },
+            date: { top: "#FFC6FF", bottom: "#BDB2FF", shoes: "#D8BBFF", text: "粉紫色系柔和搭配，散發甜美親切的約會氛圍。" }
+        },
+        cold: {
+            casual: { top: "#6B705C", bottom: "#A5A58D", shoes: "#3F37C9", text: "大地色系厚針織衫與長褲，保暖又不失層次感。" },
+            work: { top: "#2B2D42", bottom: "#8D99AE", shoes: "#111111", text: "深灰色西裝外套與毛衣堆疊，專業沉穩且防風保暖。" },
+            date: { top: "#9B5DE5", bottom: "#f15bb5", shoes: "#00f5d4", text: "亮色系長袖搭配，在沉悶的冬天裡顯得格外醒目吸引人。" }
+        },
+        rainy: {
+            casual: { top: "#4A4E69", bottom: "#22223B", shoes: "#9A8C98", text: "耐髒深色系穿搭，搭配防潑水材質休閒鞋。" },
+            work: { top: "#3D5A80", bottom: "#293241", shoes: "#000000", text: "深藍系防風外套與高腰褲，下雨天依然維持俐落職場形象。" },
+            date: { top: "#E07A5F", bottom: "#3D405B", shoes: "#F4F1DE", text: "溫暖橘紅上衣對抗陰雨天的沉悶，帶來好心情。" }
+        }
+    };
+
+    function changeColor(part, hex) {
+        if (part === 'top') {
+            document.getElementById('clothing-top').setAttribute('fill', hex);
+        } else if (part === 'bottom') {
+            document.getElementById('clothing-bottom').setAttribute('fill', hex);
+        } else if (part === 'shoes') {
+            document.getElementById('shoes-left').setAttribute('fill', hex);
+            document.getElementById('shoes-right').setAttribute('fill', hex);
+        }
+    }
+
+    function generateOOTD() {
+        const weather = document.getElementById('weather').value;
+        const occation = document.getElementById('occation').value;
+        const config = stylePresets[weather][occation];
+
+        // 更改顏色
+        changeColor('top', config.top);
+        changeColor('bottom', config.bottom);
+        changeColor('shoes', config.shoes);
+
+        // 同步調色盤數值
+        document.getElementById('topColorPicker').value = config.top;
+        document.getElementById('bottomColorPicker').value = config.bottom;
+        document.getElementById('shoesColorPicker').value = config.shoes;
+
+        // 更新文字建議
+        document.getElementById('advice-text').innerText = config.text;
+    }
+
+    function saveOOTD() {
+        const text = document.getElementById('advice-text').innerText;
+        if(text.includes("請選擇")) return;
+
+        let favs = JSON.parse(localStorage.getItem('ootd_favs')) || [];
+        if(!favs.includes(text)) {
+            favs.push(text);
+            localStorage.setItem('ootd_favs', JSON.stringify(favs));
+            renderFavs();
+        }
+    }
+
+    function renderFavs() {
+        let favs = JSON.parse(localStorage.getItem('ootd_favs')) || [];
+        const list = document.getElementById('fav-list');
+        if(favs.length === 0) {
+            list.innerHTML = "尚無紀錄";
+        } else {
+            list.innerHTML = favs.map(f => `<div class="fav-item">👗 ${f.substring(0, 20)}...</div>`).join('');
+        }
+    }
+
+    // 初始化渲染
+    renderFavs();
+</script>
+
+</body>
+</html>
